@@ -123,9 +123,50 @@ Particle physics and digital computing ``grew up together.''
 \end{center}
 \end{frame}
 
-\begin{frame}{}
+\begin{frame}{Some terminology}
+\large
+\vspace{0.5 cm}
+\begin{description}\setlength{\itemsep}{0.5 cm}
+\item[Turing complete:] can do anything a Turing machine can do.
 
+\vspace{0.25 cm}
+{\normalsize For example, conditional branching $+$ ability to store and retrieve any number of variables.}
 
+\item[Declarative:] order of expressions does not imply any order of computations.
+
+\vspace{0.25 cm}
+{\normalsize For example, SQL SELECT may be computed before or after SQL WHERE. The first HTML element is drawn {\it above} the second, but not necessarily {\it before}.}
+
+\item[Functional:] computations are defined in terms of functions that accept or return functions, usually with immutable data.
+
+\vspace{0.25 cm}
+{\normalsize For example, \small\mintinline{scala}{data.map(ev => ev.muons.maxby(mu => mu.pt))}\normalsize .}
+\end{description}
+\end{frame}
+
+\begin{frame}[fragile]{``Declarative'' is being abused}
+\small
+\vspace{0.25 cm}
+\begin{minted}{python}
+def infinite_loop():
+    return infinite_loop()
+
+def simple_boolean():
+    return False
+
+infinite_loop() and simple_boolean()    # runs forever
+simple_boolean() and infinite_loop()    # returns False
+\end{minted}
+
+\normalsize
+\vspace{0.25 cm}
+A truly declarative language would be insensitive to order and either always run forever or always short-circuit the boolean logic.
+
+\vspace{0.5 cm}
+It's hard for a declarative language to be Turing complete.
+
+\vspace{0.5 cm}
+When physicists say ``declarative,'' they usually mean ``functional.'' 
 \end{frame}
 
 
