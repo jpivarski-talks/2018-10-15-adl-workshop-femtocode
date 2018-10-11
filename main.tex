@@ -169,6 +169,84 @@ It's hard for a declarative language to be Turing complete.
 When physicists say ``declarative,'' they usually mean ``functional.'' 
 \end{frame}
 
+\begin{frame}[fragile]{The Spark-like analysis}
+\small
+\begin{columns}
+\column{1.05\linewidth}
+\begin{minted}{python}
+physt.h1(
+    t.array("muonp4")                         # get the muon 4-vectors
+     .filter(lambda muon: abs(muon.eta) < 1)  # select central muons
+     .pairs(same=False)                       # non-duplicate pairs
+     .apply(lambda mu1, mu2: mu1 + mu2)       # compute Z candidates
+     .maxby(lambda z: z.pt)                   # highest pT per event
+     .flatten()                               # ignore empty events
+     .mass,                                   # compute mass
+    bins=100).plot()
+\end{minted}
+\end{columns}
+
+\vspace{0.25 cm}
+\begin{columns}
+\column{0.4\linewidth}
+\includegraphics[width=\linewidth]{zpeak.png}
+
+\column{0.6\linewidth}
+\begin{uncoverenv}<2->
+\normalsize
+\hspace{-0.15 cm}This is not even functional: the lambda functions here are pure syntactic sugar for array operations.
+
+\vspace{0.25 cm}
+If the goal is to provide a fast, Spark-like interface, we can do that without language features.
+
+\vspace{0.25 cm}
+This is working code from awkward-array/uproot; see also ROOT's RDataFrame.
+
+\mbox{ }
+\end{uncoverenv}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Functional programming}
+\vspace{0.5 cm}
+Higher-order function (a.k.a.\ ``functional'' or ``functor''): a function that accepts functions as arguments or returns functions.
+
+\vspace{0.5 cm}
+\begin{onlyenv}<1>
+If the function only accepts functions as arguments and those arguments are known at ``compile time'' (some processing pass before the high-throughput data run), it can be syntactic sugar.
+
+\small
+\begin{columns}[t]
+\column{0.5\linewidth}
+\begin{minted}{python}
+x = dataset.filter(
+      lambda event:
+        event.trigger["Mu24"] &
+        event.trigger["DiJet100"])
+\end{minted}
+
+\column{0.5\linewidth}
+\begin{minted}{python}
+x = []
+for event in dataset:
+  if (event.trigger["Mu24"] &
+      event.trigger["DiJet100"]):
+    x.append(event)
+\end{minted}
+\end{columns}
+\end{onlyenv}
+\begin{onlyenv}<2>
+But a function that doesn't know what function it will be passed until runtime or a function that returns functions can't be substituted with a loop.
+
+\small
+\begin{minted}{python}
+def good(cut):
+    return lambda event: cut(event) & event.trigger["Mu24"]
+\end{minted}
+
+\vspace{1.7 cm}
+\end{onlyenv}
+\end{frame}
 
 
 \end{document}
