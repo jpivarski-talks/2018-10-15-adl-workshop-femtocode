@@ -71,18 +71,18 @@ SELECT expr FROM src WHERE expr GROUP BY expr
 \end{minipage}
 
 \vspace{1 cm}
-\uncover<2->{\Large Why do we need a full programming language?}
+{\Large Why do we need a full programming language?}
 \end{center}
 \end{frame}
 
-\begin{frame}{Maybe it goes all the way back to the beginning?}
+\begin{frame}{Maybe it goes back to origins?}
 \vspace{0.25 cm}
 \begin{center}
 \includegraphics[width=0.83\linewidth]{hh-tabulator.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}{Maybe it goes all the way back to the beginning?}
+\begin{frame}{Maybe it goes back to origins?}
 \vspace{0.5 cm}
 
 \includegraphics[height=5 cm]{neumann_oppie.jpg} \includegraphics[height=5 cm]{metropolis.jpg}
@@ -92,7 +92,7 @@ SELECT expr FROM src WHERE expr GROUP BY expr
 \end{center}
 \end{frame}
 
-\begin{frame}{Maybe it goes all the way back to the beginning?}
+\begin{frame}{Maybe it goes back to origins?}
 \large
 \vspace{0.5 cm}
 
@@ -102,7 +102,7 @@ We're accustomed to (ab)using a complete programming environment.
 Particle physics and digital computing ``grew up together.''
 
 \vspace{1 cm}
-\uncover<2->{But what's necessary for Monte Carlo and reconstruction is often overkill for physics analysis.}
+But what's necessary for Monte Carlo and reconstruction is often overkill for physics analysis.
 \end{frame}
 
 \begin{frame}{Shrink-wrapping a language to the problem domain}
@@ -145,9 +145,11 @@ Particle physics and digital computing ``grew up together.''
 \end{description}
 \end{frame}
 
-\begin{frame}[fragile]{``Declarative'' is being abused}
+\begin{frame}[fragile]{The word ``declarative'' is being abused}
 \small
 \vspace{0.25 cm}
+\begin{center}
+\begin{minipage}{0.8\linewidth}
 \begin{minted}{python}
 def infinite_loop():
     return infinite_loop()
@@ -158,6 +160,8 @@ def simple_boolean():
 infinite_loop() and simple_boolean()    # runs forever
 simple_boolean() and infinite_loop()    # returns False
 \end{minted}
+\end{minipage}
+\end{center}
 
 \normalsize
 \vspace{0.25 cm}
@@ -240,18 +244,23 @@ for event in dataset:
 But a function that doesn't know what function it will be passed until runtime or a function that returns functions can't be substituted with a loop.
 
 \small
+\begin{center}
+\begin{minipage}{0.8\linewidth}
 \begin{minted}{python}
 def good(cut):
-    return lambda event: cut(event) & event.trigger["Mu24"]
+    return (lambda event: cut(event) &
+                          event.trigger["Mu24"])
 \end{minted}
+\end{minipage}
+\end{center}
 
-\vspace{1.7 cm}
+\vspace{1.2 cm}
 \end{onlyenv}
 \end{frame}
 
 \begin{frame}[fragile]{Total functional programming}
-\vspace{0.5 cm}
-A fringe idea in computer science: to solve the
+\vspace{0.25 cm}
+A fringe idea in computer science: {\bf total functional programming} solves the
 
 \small
 \begin{center}
@@ -264,7 +273,7 @@ simple_boolean() and infinite_loop()    # returns False
 \end{center}
 
 \normalsize
-problem by forbidding \mintinline{python}{infinite_loop()}. That is, a non-Turing complete language in which every function returns a value.
+problem by forbidding \mintinline{python}{infinite_loop()}. That is, these are non-Turing complete languages--- every function returns a value.
 
 \vspace{0.5 cm}
 Combine this with {\bf dependent types}--- type-checking strict enough to distinguish
@@ -277,7 +286,7 @@ Combine this with {\bf dependent types}--- type-checking strict enough to distin
 and it would be possible to write physics expressions without any runtime errors. If it compiles and the input data can be loaded, it will run.
 \end{frame}
 
-\begin{frame}[fragile]{Examples from Femtocode}
+\begin{frame}[fragile]{Examples from Femtocode (2016)}
 \small
 \begin{minted}{python}
 >>> propagateTypes("x / y", x=real, y=real)
@@ -306,7 +315,7 @@ union(null, real)
 \end{minted}
 \end{frame}
 
-\begin{frame}[fragile]{Examples from Femtocode}
+\begin{frame}[fragile]{Examples from Femtocode (2016)}
 \vspace{0.5 cm}
 Predicates and logical operators (``if'', ``and'', ``or'', and ``not'') propagate constraints.
 
@@ -331,7 +340,7 @@ Check line:col 1:27 (pos 27):
 \end{verbatim}}
 \end{frame}
 
-\begin{frame}[fragile]{Examples from Femtocode}
+\begin{frame}[fragile]{Examples from Femtocode (2016)}
 \vspace{0.5 cm}
 Order does not matter (it's {\it actually} declarative)!
 
@@ -356,7 +365,7 @@ Check line:col 1:5 (pos 5):
 \end{verbatim}}
 \end{frame}
 
-\begin{frame}{Why am I not working on Femtocode?}
+\begin{frame}{Why am I not working on Femtocode now?}
 \large
 \vspace{0.5 cm}
 ``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent dealing with accidental complexity.
@@ -456,6 +465,9 @@ The main issue is that we need nested data structures, like arbitrary length lis
 
 \begin{frame}[fragile]{Representing PLURP data as arrays}
 \vspace{0.5 cm}
+\textcolor{darkblue}{\Large {\bf L}ists:} represent structure in one array and content elsewhere. Here's an example:
+
+\vspace{0.25 cm}
 Logical structure: \tabto{3 cm}{\ttfamily\textcolor{black}{[\textcolor{red}{[}\textcolor{darkblue}{0, 1, 2}], \textcolor{red}{[}], \textcolor{red}{[}\textcolor{darkblue}{3, 4}], \textcolor{red}{[}\textcolor{darkblue}{5, 6, 7, 8, 9}]\textcolor{red}{]}}}
 
 \vspace{0.05 cm}
@@ -467,15 +479,41 @@ Content:           \tabto{3 cm}{\ttfamily\verb|[ |\textcolor{darkblue}{0, 1, 2}\
 \vspace{0.05 cm}
 Parents:           \tabto{3 cm}{\ttfamily\verb|[ |\textcolor{darkgreen}{0, 0, 0}\verb|        |\textcolor{purple}{2, 2,}\verb|   |\textcolor{darkorange}{3, 3, 3, 3, 3}\verb|]|}
 
-\vspace{0.5 cm}
-\uncover<2->{A ``jagged array'' (content $+$ offsets and/or content $+$ parents) is a basic building block of variable-sized, nested structure.}
+\vspace{0.25 cm}
+A ``jagged array'' (content $+$ offsets and/or content $+$ parents) is a basic building block of variable-sized, nested structure.
 
-\begin{itemize}
-\item<3-> use a jagged array as the content of another jagged array to get {\tt\small list<list<X>>}
-\item<4-> use a fixed-size rectangular array of dimension {\tt\small N} as content to get {\tt\small list<X[N]>}
-\item<5-> use a fixed-size rectangular array of dimension {\tt\small M} as offsets to get {\tt\small list<X>[M]}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\Large {\bf U}nions:} same trick with a ``tags'' array and one ``content'' per type.
+
+\vspace{0.5 cm}
+\textcolor{darkblue}{\Large {\bf R}ecords:} one ``content'' for each field. Call it a ``table,'' which becomes a ``jagged table'' inside a jagged array; some contents may also be jagged or unions.
+
+\vspace{0.5 cm}
+\textcolor{darkblue}{\Large {\bf P}ointers:} reference previously existing arrays, rather than making new ones.
+\end{frame}
+
+\begin{frame}{Conventional array programming (arrays of primitives only)}
+\vspace{0.5 cm}
+
+{\Large Take inspiration from Numpy array operations\ldots}
+
+\vspace{0.25 cm}
+\begin{itemize}\setlength{\itemsep}{0.15 cm}
+\item Multidimensional slices: \tabto{5.5 cm}{\small \mintinline{python}{rgb_pixels[0, 50:100, ::3]}}
+\item Elementwise operations: \tabto{5.5 cm}{\small \mintinline{python}{all_pz = all_pt * sinh(all_eta)}}
+\item Broadcasting: \tabto{5.5 cm}{\small \mintinline{python}{all_phi - 2*pi}}
+\item Masking (list compaction): \tabto{5.5 cm}{\small \mintinline{python}{data[trigger & (pt > 40)]}}
+\item Fancy indexing (gather/scatter): \tabto{5.5 cm}{\small \mintinline{python}{all_eta[argsort(all_pt)]}}
+\item Row/column commutativity \tabto{5.5 cm}{\small \mintinline{python}{table["column"][7]} (row 7 of column array)}
+
+(hides AoS $\leftrightarrow$ SoA): \tabto{5.5 cm}{\small \mintinline{python}{table[7]["column"]} (field of row tuple 7)}
+\item Array reduction: \tabto{5.5 cm}{\small \mintinline{python}{array.sum()}} $\to$ scalar
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Extend to jagged arrays and tables}
 
 \end{frame}
+
 
 \end{document}
