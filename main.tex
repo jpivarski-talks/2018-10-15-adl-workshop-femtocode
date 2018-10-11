@@ -276,8 +276,93 @@ Combine this with {\bf dependent types}--- type-checking strict enough to distin
 and it would be possible to write physics expressions without any runtime errors. If it compiles and the input data can be loaded, it will run.
 \end{frame}
 
-\begin{frame}{}
+\begin{frame}[fragile]{Examples from Femtocode}
+\small
+\begin{minted}{python}
+>>> propagateTypes("x / y", x=real, y=real)
+\end{minted}
+{\color{red}
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "/" does not accept
+arguments with the given types:
+
+    /(real,
+      real)
+
+    Indeterminate form (0 / 0) is possible; constrain with if-else.
+
+Check line:col 1:0 (pos 0):
+
+    x / y
+----^
+\end{verbatim}}
+
+{\normalsize Can be resolved with a constraint:}
+
+\begin{minted}{python}
+>>> propagateTypes("if y != 0: x / y else: None", x=real, y=real)
+union(null, real)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Examples from Femtocode}
+\vspace{0.5 cm}
+Predicates and logical operators (``if'', ``and'', ``or'', and ``not'') propagate constraints.
+
+\small
+\begin{minted}{python}
+>>> propagateTypes("x == 5 and y == 6 and x == y", x=real, y=real)
+\end{minted}
+{\color{red}
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "==" does not accept
+arguments with the given types:
+
+    ==(integer(min=5, max=5),
+       integer(min=6, max=6))
+
+    The argument types have no overlap (values can never be equal).
+
+Check line:col 1:27 (pos 27):
+
+    x == 5 and y == 6 and x == y
+-------------------------------^
+\end{verbatim}}
+\end{frame}
+
+\begin{frame}[fragile]{Examples from Femtocode}
+\vspace{0.5 cm}
+Order does not matter (it's {\it actually} declarative)!
+
+\small
+\begin{minted}{python}
+>>> propagateTypes("x == y and x == 5 and y == 6", x=real, y=real)
+\end{minted}
+{\color{red}
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "==" does not accept
+arguments with the given types:
+
+    ==(integer(min=5, max=5),
+       integer(min=6, max=6))
+
+    The argument types have no overlap (values can never be equal).
+
+Check line:col 1:5 (pos 5):
+
+    x == y and x == 5 and y == 6
+---------^
+\end{verbatim}}
+\end{frame}
+
+\begin{frame}{Why am I not working on Femtocode?}
+\large
+\vspace{0.5 cm}
+``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent in the hoops they jump through for performance.
+
+
 
 \end{frame}
+
 
 \end{document}
