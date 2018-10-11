@@ -22,6 +22,7 @@
 \usepackage{minted}
 \usepackage[thicklines]{cancel}
 \usepackage{fancyvrb}
+\usepackage{tabto}
 
 \xdefinecolor{dianablue}{rgb}{0.18,0.24,0.31}
 \xdefinecolor{darkblue}{rgb}{0.1,0.1,0.7}
@@ -453,6 +454,28 @@ The main issue is that we need nested data structures, like arbitrary length lis
 \normalsize This extends beyond popular data formats, but is a necessary feature of particle physics data.
 \end{frame}
 
+\begin{frame}[fragile]{Representing PLURP data as arrays}
+\vspace{0.5 cm}
+Logical structure: \tabto{3 cm}{\ttfamily\textcolor{black}{[\textcolor{red}{[}\textcolor{darkblue}{0, 1, 2}], \textcolor{red}{[}], \textcolor{red}{[}\textcolor{darkblue}{3, 4}], \textcolor{red}{[}\textcolor{darkblue}{5, 6, 7, 8, 9}]\textcolor{red}{]}}}
 
+\vspace{0.05 cm}
+Offsets:           \tabto{3 cm}{\ttfamily\verb|[|\textcolor{red}{0,}\verb|         |\textcolor{red}{3,}\verb|  |\textcolor{red}{3,}\verb|      |\textcolor{red}{5,}\verb|             |\textcolor{red}{10}\verb|]|}
+
+\vspace{0.05 cm}
+Content:           \tabto{3 cm}{\ttfamily\verb|[ |\textcolor{darkblue}{0, 1, 2}\verb|,       |\textcolor{darkblue}{3, 4}\verb|,   |\textcolor{darkblue}{5, 6, 7, 8, 9}\verb|]|}
+
+\vspace{0.05 cm}
+Parents:           \tabto{3 cm}{\ttfamily\verb|[ |\textcolor{darkgreen}{0, 0, 0}\verb|        |\textcolor{purple}{2, 2,}\verb|   |\textcolor{darkorange}{3, 3, 3, 3, 3}\verb|]|}
+
+\vspace{0.5 cm}
+\uncover<2->{A ``jagged array'' (content $+$ offsets and/or content $+$ parents) is a basic building block of variable-sized, nested structure.}
+
+\begin{itemize}
+\item<3-> use a jagged array as the content of another jagged array to get {\tt\small list<list<X>>}
+\item<4-> use a fixed-size rectangular array of dimension {\tt\small N} as content to get {\tt\small list<X[N]>}
+\item<5-> use a fixed-size rectangular array of dimension {\tt\small M} as offsets to get {\tt\small list<X>[M]}
+\end{itemize}
+
+\end{frame}
 
 \end{document}
