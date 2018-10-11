@@ -358,10 +358,73 @@ Check line:col 1:5 (pos 5):
 \begin{frame}{Why am I not working on Femtocode?}
 \large
 \vspace{0.5 cm}
-``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent in the hoops they jump through for performance.
+``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent dealing with accidental complexity.
 
+\vspace{0.5 cm}
+\begin{center}
+\begin{minipage}{0.9\linewidth}
+\begin{description}
+\item[Accidental complexity] could be replaced with something simpler without losing expressiveness.
 
+\item[Essential complexity] reflects the complexity in the problem the physicist wants to solve.
+\end{description}
+\end{minipage}
+\end{center}
 
+\vspace{1 cm}
+``Everything should be made as simple as possible, but not simpler.''
+
+\hfill \it --- Reader's Digest, 1977
+\end{frame}
+
+\begin{frame}{High-level versus low-level}
+\vspace{0.5 cm}
+Python is popular for data analysis because of its terse syntax, simple type system, and reputation of having ``one obvious way to do a thing.''
+
+\vspace{0.5 cm}
+It does so by sacrificing performance, which becomes an issue again as a physicist scales up her analysis.
+
+\vspace{0.5 cm}
+There are many, many solutions to this problem.
+
+\begin{itemize}
+\item PyROOT: provides bindings into ROOT and C++ from Python.
+\item Numpy: provides array programming constructs like MATLAB.
+\item Numba: natively JIT-compiles array-centric Python code to be as fast as C.
+\item Cython: mixes C++ and Python (by generating and compiling a C++ extension).
+\item pybind11: wraps C++ code as a Python extension.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Numpy approach}
+\vspace{0.5 cm}
+\hfill \includegraphics[height=3 cm]{apl-timeline.pdf}
+
+\vspace{-3 cm}
+Of all the ``high-level, high-performance'' \\
+solutions in Python, Numpy is the most \\
+pervasive.
+
+\vspace{0.5 cm}
+It's a library that provides a programming \\
+model usually seen in specialized analysis \\
+languages.
+
+\vspace{0.5 cm}
+The simplest possible data structures--- arrays of numbers--- with terse syntax for regular operations that can be composed.
+
+\small
+\begin{center}
+\begin{minipage}{0.75\linewidth}
+\begin{minted}{python}
+indexes    = numpy.argsort(array_pt)
+sorted_pt  = array_pt[indexes]
+sorted_eta = array_eta[indexes]
+\end{minted}
+\end{minipage}
+\end{center}
+
+This doesn't work for us because our data are not flat arrays, but a simple extension {\it can be.}
 \end{frame}
 
 
