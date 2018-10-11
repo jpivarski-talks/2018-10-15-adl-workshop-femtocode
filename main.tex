@@ -427,5 +427,32 @@ sorted_eta = array_eta[indexes]
 This doesn't work for us because our data are not flat arrays, but a simple extension {\it can be.}
 \end{frame}
 
+\begin{frame}{Minimal type system for physics}
+\vspace{0.5 cm}
+
+The main issue is that we need nested data structures, like arbitrary length lists of Muon objects, which contain $p_T$ (float), $\eta$ (float), $\phi$ (float), $N_{\mbox{\scriptsize hits}}$ (int), etc.
+
+\large
+\begin{description}
+\item[{\bf P}rimitives:] numbers and booleans; i.e.\ all of Numpy.
+
+\item[{\bf L}ists:] arbitrary length lists of some type.
+
+\item[{\bf U}nions:] polymorphism; a type like ``electron or muon or tau.''
+
+\item[{\bf R}ecords:] packages of named, typed fields.
+\end{description}
+
+\normalsize I've been calling this a ``PLUR'' type system, and it's as general as Protocol Buffers, Thrift, Avro, Parquet, etc.
+
+\large
+\begin{description}
+\item[{\bf P}ointers:] allow nested types to be cousins or ancestors on the type graph (i.e.\ not strictly a tree). This lets the data include cross-references (cousins) and non-tree structures (ancestors).
+\end{description}
+
+\normalsize This extends beyond popular data formats, but is a necessary feature of particle physics data.
+\end{frame}
+
+
 
 \end{document}
