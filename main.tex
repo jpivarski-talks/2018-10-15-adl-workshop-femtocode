@@ -248,5 +248,36 @@ def good(cut):
 \end{onlyenv}
 \end{frame}
 
+\begin{frame}[fragile]{Total functional programming}
+\vspace{0.5 cm}
+A fringe idea in computer science: to solve the
+
+\small
+\begin{center}
+\begin{minipage}{0.8\linewidth}
+\begin{minted}{python}
+infinite_loop() and simple_boolean()    # runs forever
+simple_boolean() and infinite_loop()    # returns False
+\end{minted}
+\end{minipage}
+\end{center}
+
+\normalsize
+problem by forbidding \mintinline{python}{infinite_loop()}. That is, a non-Turing complete language in which every function returns a value.
+
+\vspace{0.5 cm}
+Combine this with {\bf dependent types}--- type-checking strict enough to distinguish
+\begin{itemize}
+\item $x$ is an integer
+\item $x$ is a non-negative integer
+\item $x$ is an integer greater than or equal to 5 and less than 12
+\end{itemize}
+
+and it would be possible to write physics expressions without any runtime errors. If it compiles and the input data can be loaded, it will run.
+\end{frame}
+
+\begin{frame}{}
+
+\end{frame}
 
 \end{document}
