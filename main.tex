@@ -767,7 +767,7 @@ Even if you're writing a type-safe language (for numerical processing, you {\it 
 \vspace{0.15 cm}
 becomes \fbox{\texttt{\scriptsize if}} \fbox{\texttt{\scriptsize (}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize >}} \fbox{\texttt{\scriptsize 0}} \fbox{\texttt{\scriptsize )}} \fbox{\texttt{\scriptsize \{}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} \fbox{\texttt{\scriptsize \}}} \fbox{\texttt{\scriptsize else}} \fbox{\texttt{\scriptsize \{}} \fbox{\texttt{\scriptsize -}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} \fbox{\texttt{\scriptsize \}}}.
 
-\item \textcolor{darkblue}{Parse:} apply rules like \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} becomes\begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm},baseline=(AA.base)]
+\item \textcolor{darkblue}{Parse:} turn tokens into trees. For example, \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} becomes\begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm},baseline=(AA.base)]
 \node(AA) {\texttt{**}}
 child { node {\texttt{2}} }
 child { node {\texttt{x}} };
