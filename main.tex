@@ -468,14 +468,14 @@ The main issue is that we need nested data structures, like arbitrary length lis
 \item[{\bf R}ecords:] packages of named, typed fields.
 \end{description}
 
-\normalsize I've been calling this a ``\textcolor{darkblue}{\bf PLUR}'' type system, and it's as general as the Protocol Buffer, Thrift, Avro, and Parquet data models.
+\normalsize I've been calling this a ``\textcolor{darkblue}{\bf PLUR}'' type system, and it's as general as the Protocol Buffer, Thrift, Avro, and Parquet data models. But we need one more:
 
 \large
 \begin{description}
 \item[{\bf P}ointers:] allow nested types to be cousins or ancestors on the type graph (i.e.\ not strictly a tree). This lets the data include cross-references (cousins) and non-tree structures (ancestors).
 \end{description}
 
-\normalsize This extends beyond popular data formats, but is a necessary feature of particle physics data.
+\normalsize Needed to associate particles to tracks, semileptonic jets to leptons, etc.
 \end{frame}
 
 \begin{frame}[fragile]{Representing PLURP data as arrays}
