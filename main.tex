@@ -749,15 +749,21 @@ Even if you're writing a type-safe language (for numerical processing, you shoul
 \item \textcolor{darkblue}{Tokenize:} turn the source code string into a sequence of tokens. For example,
 
 \vspace{0.15 cm}
-\mbox{ } \hfill \texttt{if (x > 0) \{ x**2 \} else \{ -x**2 \}} \hfill \mbox{ }
+\mbox{ } \hfill \texttt{\small if (x > 0) \{ x**2 \} else \{ -x**2 \}} \hfill \mbox{ }
 
 \vspace{0.15 cm}
-becomes \fbox{\texttt{if}} \fbox{\texttt{(}} \fbox{\texttt{x}} \fbox{\texttt{>}} \fbox{\texttt{0}} \fbox{\texttt{)}} \fbox{\texttt{\{}} \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} \fbox{\texttt{\}}} \fbox{\texttt{else}} \fbox{\texttt{\{}} \fbox{\texttt{-}} \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} \fbox{\texttt{\}}}.
+becomes \fbox{\texttt{\scriptsize if}} \fbox{\texttt{\scriptsize (}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize >}} \fbox{\texttt{\scriptsize 0}} \fbox{\texttt{\scriptsize )}} \fbox{\texttt{\scriptsize \{}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} \fbox{\texttt{\scriptsize \}}} \fbox{\texttt{\scriptsize else}} \fbox{\texttt{\scriptsize \{}} \fbox{\texttt{\scriptsize -}} \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} \fbox{\texttt{\scriptsize \}}}.
 
-\item \textcolor{darkblue}{Parse:} apply rules like \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} $\to$ \begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm}]
-\node {\texttt{**}}
-child { node {\texttt{x}} }
-child { node {\texttt{2}} };
+\item \textcolor{darkblue}{Parse:} apply rules like \fbox{\texttt{\scriptsize x}} \fbox{\texttt{\scriptsize **}} \fbox{\texttt{\scriptsize 2}} becomes\begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm},baseline=(AA.base)]
+\node(AA) {\texttt{**}}
+child { node {\texttt{2}} }
+child { node {\texttt{x}} };
+\end{tikzpicture} and
+
+\fbox{\scriptsize predicate} \fbox{\scriptsize\{} \fbox{\scriptsize consequent} \fbox{\scriptsize\}} \fbox{\scriptsize else} \fbox{\scriptsize\{} \fbox{\scriptsize alternate} \fbox{\scriptsize\}} becomes\begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm,level distance=2.5 cm},baseline=(AA.base)]
+\node(AA) {\scriptsize predicate}
+child { node {\scriptsize alternate} }
+child { node {\scriptsize consequent} };
 \end{tikzpicture}
 
 
