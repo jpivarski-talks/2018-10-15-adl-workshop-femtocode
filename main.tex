@@ -743,7 +743,7 @@ Even if you're writing a type-safe language (for numerical processing, you shoul
 \end{frame}
 
 \begin{frame}{Steps in compilation}
-\vspace{0.5 cm}
+\vspace{0.35 cm}
 
 \begin{enumerate}
 \item \textcolor{darkblue}{Tokenize:} turn the source code string into a sequence of tokens. For example,
@@ -766,10 +766,155 @@ child { node {\scriptsize alternate} }
 child { node {\scriptsize consequent} };
 \end{tikzpicture}
 
+\item \textcolor{darkblue}{Abstract syntax tree (AST):} data structure from parsing, sometimes transformed to a new tree to add context.
 
+\item \textcolor{darkblue}{Type checking/inference:} adding type attributes to AST nodes from context.
+
+\item \textcolor{darkblue}{Lowering:} transforming AST to another language, such as a sequence of hardware instructions (``compilation''), LLVM IR, or another human-readable language like C++ or Javascript (``transpilation'').
 \end{enumerate}
+\end{frame}
 
+\begin{frame}{What PLY does for you}
+\vspace{0.5 cm}
+You supply regular expressions and maybe executable code to identify the next token; PLY repeatedly applies it to tokenize.
 
+\vspace{0.5 cm}
+You supply declarative rules that identify groups of tokens and an arbitrary function for the transformation. PLY handles the push-shift steps in the LALR(1) algorithm.
+
+\vspace{0.5 cm}
+PLY doesn't make an AST for you; your functions have the freedom to define such a tree (but you {\it should!}).
+
+\vspace{0.5 cm}
+I have some code to turn syntax in Backus-Naur form (a declarative grammar) into PLY rules, which makes short work of what you usually want to do.
+\end{frame}
+
+\begin{frame}[fragile]{Example of Backus-Naur form: the C programming language}
+\fontsize{5}{0}\selectfont
+\begin{columns}[t]
+\column{0.33\linewidth}
+\begin{verbatim}
+<trans-unit> ::= {<ext-decl>}*
+<ext-decl> ::= <fcn-def> | <decl>
+<fcn-def> ::= {<decl-spec>}* <declr>
+  {<decl>}* <cmpnd-stmt>
+<decl-spec> ::= <storage-class-spec>
+  | <type-spec> | <type-qual>
+<storage-class-spec> ::= auto | register
+  | static | extern | typedef
+<type-spec> ::= void | char | short | int
+  | long | float | double | signed | unsigned
+  | <struct-or-union-spec> | <enum-spec>
+  | <typedef-name>
+<struct-or-union-spec> ::= <struct-or-union>
+  <ident> {{<struct-decl>}+ } |
+  <struct-or-union> {{<struct-decl>}+ } |
+  <struct-or-union> <ident>
+<struct-or-union> ::= struct | union
+<struct-decl> ::= {<spec-qual>}*
+  <struct-declr-list>
+<spec-qual> ::= <type-spec> | <type-qual>
+<struct-declr-list> ::= <struct-declr> |
+  <struct-declr-list> , <struct-declr>
+<struct-declr> ::= <declr> | <declr>
+  : <const-expr> | : <const-expr>
+<declr> ::= {<pointer>}? <direct-declr>
+<pointer> ::= * {<type-qual>}* {<pointer>}?
+<type-qual> ::= const | volatile
+<direct-declr> ::= <ident> | ( <declr> )
+  | <direct-declr> [ {<const-expr>}? ]
+  | <direct-declr> ( <param-type-list> )
+  | <direct-declr> ( {<ident>}* )
+<const-expr> ::= <cond-expr>
+<cond-expr> ::= <logical-or-expr> |
+  <logical-or-expr> ? <expr> : <cond-expr>
+<logical-or-expr> ::= <logical-and-expr> |
+  <logical-or-expr> || <logical-and-expr>
+<logical-and-expr> ::= <inclusive-or-expr> |
+  <logical-and-expr> && <inclusive-or-expr>
+\end{verbatim}
+
+\column{0.36\linewidth}
+\begin{verbatim}
+<inclusive-or-expr> ::= <exclusive-or-expr> |
+  <inclusive-or-expr> | <exclusive-or-expr>
+<exclusive-or-expr> ::= <and-expr> |
+  <exclusive-or-expr> ^ <and-expr>
+<and-expr> ::= <equality-expr> | <and-expr>
+  & <equality-expr>
+<equality-expr> ::= <rel-expr> | <equality-expr>
+  == <rel-expr> | <equality-expr> != <rel-expr>
+<rel-expr> ::=
+  <shift-expr> | <rel-expr> < <shift-expr> |
+  <rel-expr> > <shift-expr> | <rel-expr> <=
+  <shift-expr> | <rel-expr> >= <shift-expr>
+<shift-expr> ::= <add-expr> | <shift-expr> <<
+  <add-expr> | <shift-expr> >> <add-expr>
+<add-expr> ::= <mul-expr> | <add-expr> +
+  <mul-expr> | <add-expr> - <mul-expr>
+<mul-expr> ::= <cast-expr> | <mul-expr> *
+  <cast-expr> | <mul-expr> / <cast-expr> |
+  <mul-expr> % <cast-expr>
+<cast-expr> ::= <unary-expr> | ( <type-name> )
+  <cast-expr>
+<unary-expr> ::= <post-expr> | ++ <unary-expr> |
+  -- <unary-expr> | <unary-operator> <cast-expr>
+  | sizeof <unary-expr> | sizeof <type-name>
+<post-expr> ::= <primary-expr> | <post-expr>
+  [ <expr> ] | <post-expr> ( {<assign-expr>}* )
+  | <post-expr> . <ident> | <post-expr> ->
+  <ident> | <post-expr> ++ | <post-expr> --
+<primary-expr> ::= <ident> | <const> | <string>
+  | ( <expr> )
+<const> ::= <integer-const> | <character-const>
+  | <floating-const> | <enumeration-const>
+<expr> ::= <assign-expr> | <expr> , <assign-expr>
+<assign-expr> ::= <cond-expr> | <unary-expr>
+  <assignment-operator> <assign-expr>
+<assignment-operator> ::= = | *= | /= | %= | +=
+  | -= | <<= | >>= | &= | ^= | |=
+\end{verbatim}
+
+\column{0.36\linewidth}
+\begin{verbatim}
+<unary-operator> ::= & | * | + | - | ~ | !
+<type-name> ::= {<spec-qual>}+ {<abstr-declr>}?
+<param-type-list> ::= <param-list> |
+  <param-list> , ...
+<param-list> ::= <param-decl> | <param-list> ,
+  <param-decl>
+<param-decl> ::= {<decl-spec>}+ <declr> |
+  {<decl-spec>}+ <abstr-declr> | {<decl-spec>}+
+<abstr-declr> ::= <pointer> | <pointer>
+  <direct-abstr-declr> | <direct-abstr-declr>
+<direct-abstr-declr> ::=  ( <abstr-declr> ) |
+  {<direct-abstr-declr>}? [ {<const-expr>}? ] |
+  {<direct-abstr-declr>}? ( {<param-type-list>}? )
+<enum-spec> ::= enum <ident> { <enum-list> }
+  | enum { <enum-list> } | enum <ident>
+<enum-list> ::= <enum> | <enum-list> , <enum>
+<enum> ::= <ident> | <ident> = <const-expr>
+<typedef-name> ::= <ident>
+<decl> ::=  {<decl-spec>}+ {<init-declr>}* ;
+<init-declr> ::= <declr> | <declr> = <init>
+<init> ::= <assign-expr> | { <init-list> } |
+  { <init-list> , }
+<init-list> ::= <init> | <init-list> , <init>
+<cmpnd-stmt> ::= { {<decl>}* {<stmt>}* }
+<stmt> ::= <labeled-stmt> | <expr-stmt> |
+  <cmpnd-stmt> | <sel-stmt> | <iter-stmt>
+  | <jump-stmt>
+<labeled-stmt> ::= <ident> : <stmt> | case
+  <const-expr> : <stmt> | default : <stmt>
+<expr-stmt> ::= {<expr>}? ;
+<sel-stmt> ::= if ( <expr> ) <stmt> | if ( <expr>
+  ) <stmt> else <stmt> | switch ( <expr> ) <stmt>
+<iter-stmt> ::= while ( <expr> ) <stmt> | do
+  <stmt> while ( <expr> ) ; | for ( {<expr>}? ;
+  {<expr>}? ; {<expr>}? ) <stmt>
+<jump-stmt> ::= goto <ident> ; | continue ; |
+  break ; | return {<expr>}? ;
+\end{verbatim}
+\end{columns}
 \end{frame}
 
 
