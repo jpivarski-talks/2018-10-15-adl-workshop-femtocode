@@ -567,7 +567,7 @@ jagged arrays before indexing): \tabto{5.5 cm}{\small \mintinline{python}{events
 \begin{minted}{python}
 for event in dataset:
     for jet in event.jets:                  # one per jet minus
-        jet.phidiff = jet.phi - event.phi   # one per event
+        jet.diff = jet.phi - event.phi      # one per event
 \end{minted}
 \normalsize
 
@@ -576,8 +576,7 @@ for event in dataset:
 \small
 \begin{minted}{python}
 # because of extended broadcasting rules
-events["jets"]["phidiff"] = (
-                    events["jets"]["phi"] - events["MET"]["phi"])
+events["jets"]["diff"] = events["jets"]["phi"] - events["MET"]["phi"]
 \end{minted}
 \end{frame}
 
