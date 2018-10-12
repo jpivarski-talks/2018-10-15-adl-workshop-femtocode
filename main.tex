@@ -112,7 +112,7 @@ But what's necessary for Monte Carlo and reconstruction is often overkill for ph
 \end{itemize}
 
 \begin{center}
-\textcolor{darkorange}{\bf awk}, \textcolor{darkorange}{\bf Fortran77}, \textcolor{darkorange}{\bf Erlang}, \textcolor{darkorange}{\bf \LaTeX}, \textcolor{darkorange}{\bf PostScript}
+\textcolor{darkorange}{\bf Fortran77}, \textcolor{darkorange}{\bf Erlang}, \textcolor{darkorange}{\bf awk}, \textcolor{darkorange}{\bf \LaTeX}, \textcolor{darkorange}{\bf PostScript}
 \end{center}
 
 \begin{itemize}
@@ -171,16 +171,16 @@ A truly declarative language would be insensitive to order and either always run
 It's hard for a declarative language to be Turing complete.
 
 \vspace{0.5 cm}
-When physicists say ``declarative,'' they usually mean ``functional.'' 
+When physicists say ``declarative,'' they usually mean ``functional'' or even ``Spark-like.''
 \end{frame}
 
-\begin{frame}[fragile]{The Spark-like analysis}
+\begin{frame}[fragile]{Spark-like analysis: a pipeline of operations}
 \small
 \begin{columns}
 \column{1.05\linewidth}
 \begin{minted}{python}
 physt.h1(
-    t.array("muonp4")                         # get the muon 4-vectors
+    t.array("muonp4")    # get zero or more muon 4-vectors per event
      .filter(lambda muon: abs(muon.eta) < 1)  # select central muons
      .pairs(same=False)                       # non-duplicate pairs
      .apply(lambda mu1, mu2: mu1 + mu2)       # compute Z candidates
@@ -214,11 +214,11 @@ This is working code from awkward-array/uproot; see also ROOT's RDataFrame.
 
 \begin{frame}[fragile]{Functional programming}
 \vspace{0.5 cm}
-Higher-order function (a.k.a.\ ``functional'' or ``functor''): a function that accepts functions as arguments or returns functions.
+{\bf Higher-order function (a.k.a.\ ``functional'' or ``functor''):} a function that accepts functions as arguments or returns functions.
 
 \vspace{0.5 cm}
 \begin{onlyenv}<1>
-If the function only accepts functions as arguments and those arguments are known at ``compile time'' (some processing pass before the high-throughput data run), it can be syntactic sugar.
+If the higher-order function only accepts functions as arguments and those arguments are known at ``compile time'' (some processing pass before the high-throughput pass over data), it can be substituted by a loop or parallel loops.
 
 \small
 \begin{columns}[t]
@@ -241,7 +241,7 @@ for event in dataset:
 \end{columns}
 \end{onlyenv}
 \begin{onlyenv}<2>
-But a function that doesn't know what function it will be passed until runtime or a function that returns functions can't be substituted with a loop.
+But if a higher-order function doesn't know what function it will be passed until runtime or if it returns functions, it is more powerful than a loop.
 
 \small
 \begin{center}
@@ -273,7 +273,7 @@ simple_boolean() and infinite_loop()    # returns False
 \end{center}
 
 \normalsize
-problem by forbidding \mintinline{python}{infinite_loop()}. That is, these are non-Turing complete languages--- every function returns a value.
+problem by forbidding \mintinline{python}{infinite_loop()}. That is, these are non-Turing complete languages--- every function is certain to return a value.
 
 \vspace{0.5 cm}
 Combine this with {\bf dependent types}--- type-checking strict enough to distinguish
@@ -368,11 +368,11 @@ Check line:col 1:5 (pos 5):
 \begin{frame}{Why am I not working on Femtocode now?}
 \large
 \vspace{0.5 cm}
-``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent dealing with accidental complexity.
+``Zero runtime errors'' is a nice feature, but it's not the {\it first} thing we need. Interacting with physicists, I saw that more time is spent dealing with accidental complexity than runtime errors.
 
 \vspace{0.5 cm}
 \begin{center}
-\begin{minipage}{0.9\linewidth}
+\begin{minipage}{0.85\linewidth}
 \begin{description}
 \item[Accidental complexity] could be replaced with something simpler without losing expressiveness.
 
@@ -421,15 +421,15 @@ model usually seen in specialized analysis \\
 languages.
 
 \vspace{0.5 cm}
-The simplest possible data structures--- arrays of numbers--- with terse syntax for regular operations that can be composed.
+It models the simplest possible data structures--- arrays of numbers--- with terse syntax for regular operations that can be composed for complex analyses (e.g.\ LIGO).
 
 \small
 \begin{center}
-\begin{minipage}{0.75\linewidth}
+\begin{minipage}{0.9\linewidth}
 \begin{minted}{python}
-indexes    = numpy.argsort(array_pt)
-sorted_pt  = array_pt[indexes]
-sorted_eta = array_eta[indexes]
+indexes    = numpy.argsort(array_pt)   # array of integers
+sorted_pt  = array_pt[indexes]         # sorted pT
+sorted_eta = array_eta[indexes]        # eta sorted by pT
 \end{minted}
 \end{minipage}
 \end{center}
@@ -486,7 +486,7 @@ A ``jagged array'' (content $+$ offsets and/or content $+$ parents) is a basic b
 \textcolor{darkblue}{\Large {\bf U}nions:} same trick with a ``tags'' array and one ``content'' per type.
 
 \vspace{0.5 cm}
-\textcolor{darkblue}{\Large {\bf R}ecords:} one ``content'' for each field. Call it a ``table,'' which becomes a ``jagged table'' inside a jagged array; some contents may also be jagged or unions.
+\textcolor{darkblue}{\Large {\bf R}ecords:} one ``content'' for each field. Call it a ``table,'' which becomes a ``jagged table'' if placed in a jagged array; some contents may also be jagged or unions.
 
 \vspace{0.5 cm}
 \textcolor{darkblue}{\Large {\bf P}ointers:} reference previously existing arrays, rather than making new ones.
@@ -568,7 +568,7 @@ events["jets"]["phidiff"] = (
 
 \begin{frame}[fragile]{Solving physics problems with jagged array programming}
 \vspace{0.5 cm}
-{\bf Problem 2:} Compute mass of all particles from two collections, subjet to a cut.
+{\bf Problem 2:} Compute mass of all particles from two collections, subject to a cut.
 \small
 \begin{minted}{python}
 for event in dataset:
@@ -666,7 +666,7 @@ VirtualArray & generates an array upon first access, then caches & $T$ \\
 
 \begin{columns}
 \column{1.035\linewidth}
-Array programming requires many temporary variables, which introduces an accidental complexity of its own (look at a LIGO analysis!).
+Array programming requires many temporary variables (or repetition), which introduces an accidental complexity of its own (look at a LIGO analysis!).
 \end{columns}
 
 \vspace{0.75 cm}
