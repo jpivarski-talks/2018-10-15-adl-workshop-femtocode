@@ -631,6 +631,36 @@ nonempty_best = events["best"].flatten()
 \end{columns}
 \end{frame}
 
+\begin{frame}{awkward-array: a suite of special array types}
+\scriptsize
+\vspace{0.45 cm}
+\begin{columns}[t]
+\column{0.55\linewidth}
+\begin{tabular}{p{0.23\linewidth} p{0.55\linewidth} c}
+class & purpose & type \\\hline
+JaggedArray & representing an array of different-length subarrays, indexed as elements & $[0, \infty) \to T$ \\
+ByteJagged- Array & representing an array of different-length subarrays, indexed as bytes & $[0, \inf) \to T$ \\
+Table & representing a table of different-typed columns; {\bf mutable: columns can be added or removed} & $\mbox{Table}(T\ldots)$ \\
+UnionArray & tagging and indexing elements in arrays to simulate a heterogeneous array & $\mbox{Union}(T\ldots)$ \\
+MaskedArray & byte-masking elements of an array as N/A & $\mbox{Option}(T)$ \\
+BitMasked- Array & bit-masking elements of an array as N/A & $\mbox{Option}(T)$ \\
+IndexedMasked- Array & indexes elements of an array as N/A or as a pointer (content is sparse) & $\mbox{Option}(T)$ \\
+ObjectArray & generates objects in an array upon access & opaque\vspace{0.33 cm} \\
+\end{tabular}
+
+\column{0.55\linewidth}
+\mbox{\hspace{0.95 cm}\begin{tabular}{p{0.2\linewidth} p{0.47\linewidth} c}
+class & purpose & type \\\hline
+IndexedArray & indexes elements of an array as a pointer by index position & $T$ \\
+ByteIndexed- Array & indexes elements of an array as a pointer by byte position & $T$ \\
+SparseArray & represents an array storing only elements whose values is not a default value (such as zero); in a sense, the opposite of IndexedArray & $T$ \\
+ChunkedArray & logically concatenates discontiguous chunks into one big array; chunk sizes might be known or unknown; appendable & $T$ \\
+Appendable- Array & allocates array chunks to append or extend a Numpy array; {\bf mutable: number of rows can grow; restricted: Numpy content only} & $T$ \\
+VirtualArray & generates an array upon first access, then caches & $T$ \\
+\end{tabular}\hspace{-0.25 cm}}
+\end{columns}
+\end{frame}
+
 
 
 \end{document}
