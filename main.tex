@@ -770,7 +770,7 @@ child { node {\scriptsize consequent} };
 
 \item \textcolor{darkblue}{Type checking/inference:} adding type attributes to AST nodes from context.
 
-\item \textcolor{darkblue}{Lowering:} transforming AST to another language, such as a sequence of hardware instructions (``compilation''), LLVM IR, or another human-readable language like C++ or Javascript (``transpilation'').
+\item \textcolor{darkblue}{Lowering:} transforming AST to another language, such as a sequence of hardware instructions (``compilation''), LLVM Intermediate Representation, or another human-readable language like C++ or Javascript (``transpilation'').
 \end{enumerate}
 \end{frame}
 
@@ -1013,7 +1013,46 @@ If the inference gets to a point where there are no rules, that's a type error.
 Surviving the type checking pass is a proof that the code will have certain properties.
 \end{frame}
 
+\begin{frame}{Lowering}
+\vspace{0.5 cm}
+\textcolor{darkblue}{Final stage:} turn your AST into another language for someone else to deal with.
 
+\vspace{0.25 cm}
+\begin{itemize}\setlength{\itemsep}{0.5 cm}
+\item \textcolor{darkorange}{\bf Directly emit machine code?} Difficult and hardware-dependent; this is what gcc does (as well as pycparser).
 
+\item \textcolor{darkorange}{\bf Emit LLVM Intermediate Representation (IR)?} Popular these days: a typed assembly language that compiles to machine code with optimization: get Cling's optimizations for free.
+
+\item \textcolor{darkorange}{\bf Write another human-readable language, like C++?} Called ``transpiling,'' this is a perfectly valid technique. Hundreds of languages ``compile to Javascript'' for use in web development.
+
+\vspace{0.25 cm}
+Only drawback: if errors occur in the second compilation, they may be hard to debug (different line numbers, variable names), and will be bewildering to the user.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Getting back to my suggestion}
+\vspace{0.5 cm}
+The lowered language could be Python making awkward-array calls.
+
+\vspace{0.5 cm}
+Instead of AST $\to$ language, transform your AST $\to$ the Python AST with appropriate function calls. Skipping a second parsing step speeds up compilation, making it suitable for Just-In-Time (JIT) compilation in an interactive environment.
+
+\vspace{0.5 cm}
+You can build higher-level types on a simple PLURP type system.
+
+\vspace{0.5 cm}
+You get CPU $\leftrightarrow$ GPU independence for free.
+
+\vspace{0.5 cm}
+I will be developing and optimizing the awkward-array library; it makes a good factorization between high-level concepts and low-level implementations.
+\end{frame}
+
+\begin{frame}{The hardest and most important question}
+\Large
+\vspace{0.5 cm}
+\begin{center}
+What language features and built-in functions do physicists need?
+\end{center}
+\end{frame}
 
 \end{document}
