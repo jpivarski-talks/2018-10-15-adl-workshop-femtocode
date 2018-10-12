@@ -991,6 +991,27 @@ def p_arith_expr_star_4(p):
 \end{columns}
 \end{frame}
 
+\begin{frame}{Type checking/inference}
+\vspace{0.35 cm}
+Apply type inference rules to propagate types from knowns (literal constants and function arguments) to unknowns (through expressions to assignments). For example,
+
+\vspace{-0.25 cm}
+\[ (e_1: \mbox{int} \wedge e_2: \mbox{int}) \Rightarrow e_1 + e_2: \mbox{int} \]
+
+\vspace{-0.5 cm}
+\[ (e_1: \mbox{int} \wedge e_2: \mbox{float}) \Rightarrow e_1 + e_2: \mbox{float} \]
+
+\vspace{-0.5 cm}
+\[ (e_1: \mbox{float} \wedge e_2: \mbox{float}) \Rightarrow e_1 + e_2: \mbox{float} \]
+
+\includegraphics[width=\linewidth]{type-inference.pdf}
+
+\vspace{0.25 cm}
+If the inference gets to a point where there are no rules, that's a type error.
+
+\vspace{0.1 cm}
+Surviving the type checking pass is a proof that the code will have certain properties.
+\end{frame}
 
 
 
