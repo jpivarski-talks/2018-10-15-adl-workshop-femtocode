@@ -917,5 +917,82 @@ I have some code to turn syntax in Backus-Naur form (a declarative grammar) into
 \end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{Example of tokenizing/parsing (generated from Backus-Naur)}
+\vspace{0.25 cm}
+\begin{columns}[t]
+\column{0.5\linewidth}
+{\large \underline{From the tokenizer}}
+
+\tiny
+\begin{minted}{python}
+def t_DEC_NUMBER(t):
+    r"(0+|[1-9][0-9]*)"
+    t.value = int(t.value), kwds(t.lexer, len(t.value))
+    return t
+tokens.append("DEC_NUMBER")
+
+def t_NAME(t):
+    r"[a-zA-Z_][a-zA-Z0-9_]*"
+    t.type = reserved.get(t.value, "NAME")
+    t.value = t.value, kwds(t.lexer, len(t.value))
+    return t
+tokens.append("NAME")
+
+def t_EQEQUAL(t):
+    r"\=\="
+    t.value = t.value, kwds(t.lexer, len(t.value))
+    return t
+
+def t_EQUAL(t):
+    r"\="
+    t.value = t.value, kwds(t.lexer, len(t.value))
+    return t
+
+def t_comment(t):
+    r"[ ]*\043[^\n]*"  # \043 is "#"
+    pass
+
+t_ignore = " \t\f"
+\end{minted}
+
+\column{0.5\linewidth}
+{\large \underline{From the parser}}
+
+\tiny
+\begin{minted}{python}
+# arith_expr: term (('+' | '-') term)*
+def p_arith_expr_1(p):
+    '''arith_expr : term'''
+    #                  1
+    p[0] = p[1]
+def p_arith_expr_2(p):
+    '''arith_expr : term arith_expr_star'''
+    #                  1               2
+    p[0] = unwrap_left_associative([p[1]] + p[2],
+                                   alt=len(p[2]) > 2)
+
+def p_arith_expr_star_1(p):
+    '''arith_expr_star : PLUS term'''
+    #                       1    2
+    p[0] = [Add(**p[1][1]), p[2]]
+def p_arith_expr_star_2(p):
+    '''arith_expr_star : MINUS term'''
+    #                        1    2
+    p[0] = [Sub(**p[1][1]), p[2]]
+def p_arith_expr_star_3(p):
+    '''arith_expr_star : arith_expr_star PLUS term'''
+    #                                  1    2    3
+    p[0] = p[1] + [Add(**p[2][1]), p[3]]
+def p_arith_expr_star_4(p):
+    '''arith_expr_star : arith_expr_star MINUS term'''
+    #                                  1     2    3
+    p[0] = p[1] + [Sub(**p[2][1]), p[3]]
+\end{minted}
+\end{columns}
+\end{frame}
+
+
+
+
 
 \end{document}
