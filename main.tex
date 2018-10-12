@@ -479,7 +479,7 @@ The main issue is that we need nested data structures, like arbitrary length lis
 \end{frame}
 
 \begin{frame}[fragile]{Representing PLURP data as arrays}
-\vspace{0.5 cm}
+\vspace{0.4 cm}
 \textcolor{darkblue}{\Large {\bf L}ists:} represent structure in one array and content elsewhere. Here's an example:
 
 \vspace{0.25 cm}
@@ -497,7 +497,7 @@ Parents:           \tabto{3 cm}{\ttfamily\verb|[ |\textcolor{darkgreen}{0, 0, 0}
 \vspace{0.25 cm}
 A ``jagged array'' (content $+$ offsets and/or content $+$ parents) is a basic building block of variable-sized, nested structure.
 
-\vspace{0.25 cm}
+\vspace{0.5 cm}
 \textcolor{darkblue}{\Large {\bf U}nions:} same trick with a ``tags'' array and one ``content'' per type.
 
 \vspace{0.5 cm}
