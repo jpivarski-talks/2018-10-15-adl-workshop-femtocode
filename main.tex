@@ -39,6 +39,7 @@
 \date{October 15, 2018}
 
 \usetikzlibrary{shapes.callouts}
+\usetikzlibrary{trees}
 
 \begin{document}
 
@@ -714,8 +715,53 @@ It's very easy to hide under a functional style (literally 8 lines of code). But
 \begin{frame}{Suggestion: build a language over awkward-arrays}
 \large
 \vspace{0.5 cm}
+A language consists of
+\begin{itemize}
+\item a parser
+\item a type system
+\item optional type checking/inference
+\item ``lowering'' to an execution environment
+\item an execution engine
+\end{itemize}
+
+\vspace{0.5 cm}
+The awkward-array library is the last survivor of the Femtocode project: just the execution engine.
+
+\vspace{0.5 cm}
+As an execution engine, it's fast, versatile, and suited to particle physics. Everything resolves to array operations, not event-by-event calculations, which are portable to vector processors like GPUs. (An original aim of Femtocode was to be CPU/GPU agnostic.)
+\end{frame}
+
+\begin{frame}{Python is a good environment for building languages}
+\vspace{0.5 cm}
+Language development was once dominated by LISP because of its dynamic typing and simple data structures.
+
+\vspace{0.5 cm}
+PLY (Python Lex-Yacc) is a tokenizer-parser generator in pure Python for a reasonably general class of languages (LALR(1), which includes C, Python, and Java).
+
+\vspace{0.5 cm}
+Even if you're writing a type-safe language (for numerical processing, you should), it's easier to express the recursive rules for type checking and abstract syntax tree transformations without statically checked types.
+\end{frame}
+
+\begin{frame}{Steps in compilation}
+\vspace{0.5 cm}
+
+\begin{enumerate}
+\item \textcolor{darkblue}{Tokenize:} turn the source code string into a sequence of tokens. For example,
+
+\vspace{0.15 cm}
+\mbox{ } \hfill \texttt{if (x > 0) \{ x**2 \} else \{ -x**2 \}} \hfill \mbox{ }
+
+\vspace{0.15 cm}
+becomes \fbox{\texttt{if}} \fbox{\texttt{(}} \fbox{\texttt{x}} \fbox{\texttt{>}} \fbox{\texttt{0}} \fbox{\texttt{)}} \fbox{\texttt{\{}} \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} \fbox{\texttt{\}}} \fbox{\texttt{else}} \fbox{\texttt{\{}} \fbox{\texttt{-}} \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} \fbox{\texttt{\}}}.
+
+\item \textcolor{darkblue}{Parse:} apply rules like \fbox{\texttt{x}} \fbox{\texttt{**}} \fbox{\texttt{2}} $\to$ \begin{tikzpicture}[edge from parent fork right,grow=east,level 1/.style={sibling distance=0.5 cm}]
+\node {\texttt{**}}
+child { node {\texttt{x}} }
+child { node {\texttt{2}} };
+\end{tikzpicture}
 
 
+\end{enumerate}
 
 
 \end{frame}
