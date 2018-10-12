@@ -631,7 +631,7 @@ nonempty_best = events["best"].flatten()
 \end{columns}
 \end{frame}
 
-\begin{frame}{awkward-array: a suite of special array types}
+\begin{frame}{awkward-array: a suite of special array classes}
 \scriptsize
 \vspace{0.45 cm}
 \begin{columns}[t]
@@ -661,6 +661,51 @@ VirtualArray & generates an array upon first access, then caches & $T$ \\
 \end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{But this is not a language}
+\vspace{0.5 cm}
 
+\begin{columns}
+\column{1.035\linewidth}
+Array programming requires many temporary variables, which introduces an accidental complexity of its own (look at a LIGO analysis!).
+\end{columns}
+
+\vspace{0.75 cm}
+\begin{columns}[t]
+\column{0.45\linewidth}
+Array programming style
+
+\scriptsize
+\vspace{\baselineskip}
+\begin{minted}{python}
+muonp4    = t.array("muonp4")
+muonp4cut = muonp4[abs(muonp4["eta"]) < 1]
+muonpairs = muonp4cut.pairs(same=False)
+zcands    = muonpairs._0 + muonpairs._1
+bestz     = zcands[zcands.pt.argmax()]
+bestzflat = bestz.flatten()
+masses    = bestzflat.mass
+physt.h1(masses, bins=100).plot()
+\end{minted}
+
+\column{0.53\linewidth}
+Functional programming sugar
+
+\scriptsize
+\begin{minted}{python}
+physt.h1(
+    t.array("muonp4")
+     .filter(lambda muon: abs(muon.eta) < 1)
+     .pairs(same=False)
+     .apply(lambda mu1, mu2: mu1 + mu2)
+     .maxby(lambda z: z.pt)
+     .flatten()
+     .mass,
+    bins=100).plot()
+\end{minted}
+\end{columns}
+
+\vspace{0.75 cm}
+It's very easy to hide under a functional style (literally 8 lines of code). But that doesn't change the fact that it's strictly evaluated, forcing users to think about order of operations and memory management.
+\end{frame}
 
 \end{document}
